@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DY Uppar and Sons: Project Performance & Risk Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6;
+            color: #32384D;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .kpi-box {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #00A6FB;
+        }
+        .kpi-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #32384D;
+            margin-top: 0.5rem;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .milestone-node {
+            background-color: #00A6FB;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        .milestone-connector {
+            flex-grow: 1;
+            height: 3px;
+            background-color: #FECD1A;
+            margin: 0 -0.5rem;
+            position: relative;
+            z-index: 5;
+        }
+        .milestone-connector::after {
+            content: '▶';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #FECD1A;
+            font-size: 1.25rem;
+        }
+        .milestone-node.completed { background-color: #63C132; }
+        .milestone-node.delayed { background-color: #DC493A; }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black text-[#00A6FB] mb-2">Project Performance & Risk Analytics</h1>
+            <h2 class="text-2xl md:text-3xl font-bold text-[#32384D]">DY Uppar and Sons: Driving Scalability Through Data</h2>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Enhancing our strong track record of early completions and EPC project execution with critical visibility into project health and risk profiles.</p>
+        </header>
+
+        <section class="mb-16">
+            <h3 class="text-3xl font-bold text-center text-[#32384D] mb-8">Executive Summary: Portfolio Health at a Glance</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">A high-level overview of our current project portfolio's performance, highlighting key operational metrics and overall risk posture. This helps leadership quickly grasp the pulse of ongoing operations.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="kpi-box">
+                    <div class="kpi-value">22</div>
+                    <div class="kpi-label">Active Projects</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-value">88<span class="text-xl">%</span></div>
+                    <div class="kpi-label">Overall Schedule Adherence</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-value">+2.5<span class="text-xl">%</span></div>
+                    <div class="kpi-label">Average Budget Variance</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-value">Low</div>
+                    <div class="kpi-label flex items-center justify-center">
+                        <span class="status-dot bg-[#63C132]"></span>Overall Risk Profile
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Portfolio Schedule Adherence</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">This gauge indicates the percentage of projects currently on or ahead of their planned schedule, reflecting our collective punctuality.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="overallScheduleAdherenceChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Key Overrun Statistics</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Snapshot of total deviations from original plans, representing the cumulative impact of delays and additional costs across all active projects.</p>
+                    <div class="grid grid-cols-2 gap-4 h-full items-center">
+                        <div class="kpi-box bg-[#F3F4F6]">
+                            <div class="kpi-value text-[#DC493A]">180</div>
+                            <div class="kpi-label">Total Days Overrun</div>
+                        </div>
+                        <div class="kpi-box bg-[#F3F4F6]">
+                            <div class="kpi-value text-[#DC493A]">$1.2M</div>
+                            <div class="kpi-label">Total Cost Overrun</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h3 class="text-3xl font-bold text-center text-[#32384D] mb-8">Detailed Performance Analytics: Drilling Down</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Comprehensive analysis of project execution, including adherence to schedule and budget, and efficiency in resource and material utilization.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Schedule Adherence by Project Type</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Comparing average schedule adherence across different categories of projects helps identify type-specific challenges and best practices.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="scheduleAdherenceByTypeChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Cumulative Cost Overrun Trend</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Tracking the cumulative cost variance over time provides insight into financial discipline and when budget deviations typically occur.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="cumulativeCostOverrunChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Resource & Material Utilization (Actual vs. Planned)</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">This chart highlights where our actual usage of key resources and materials deviates from what was planned, crucial for efficiency gains.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="utilizationChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Project Milestone Status & Impact</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Visualizing the typical flow of project milestones, indicating completions and highlighting any delays and their potential chain reactions.</p>
+                    <div class="flex flex-col items-center justify-center p-4">
+                        <div class="flex items-center gap-2 mb-4 w-full justify-center">
+                            <div class="milestone-node completed">Initiation</div>
+                            <div class="milestone-connector"></div>
+                            <div class="milestone-node completed">Planning</div>
+                            <div class="milestone-connector"></div>
+                            <div class="milestone-node delayed">Execution</div>
+                            <div class="milestone-connector"></div>
+                            <div class="milestone-node">Monitoring</div>
+                            <div class="milestone-connector"></div>
+                            <div class="milestone-node">Closure</div>
+                        </div>
+                        <p class="text-sm text-gray-700 mt-2">Currently: <span class="font-bold text-[#DC493A]">3</span> Delayed Milestones Across Portfolio</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h3 class="text-3xl font-bold text-center text-[#32384D] mb-8">Risk Analytics & Simulation Insights</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Proactive identification and mitigation of potential project risks, coupled with insights from historical data to refine future project estimations.</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Project Risk Score Distribution</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">A histogram showing how our projects are distributed across different risk score categories, allowing for focused risk management strategies.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="riskScoreDistributionChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Risk Exposure by Driver Type</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">This radar chart visualizes our overall exposure to different categories of risk drivers, such as financial, operational, or external factors.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="riskDriverExposureChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="card p-6 mb-8">
+                <h4 class="font-bold text-xl mb-4">Simulation Insights: Project Overrun Likelihood</h4>
+                <p class="text-sm text-gray-600 mb-4">By analyzing historical projects, we can simulate and predict potential cost and time overruns for new projects based on their characteristics.</p>
+                <div class="chart-container h-80 md:h-96"><canvas id="overrunLikelihoodChart"></canvas></div>
+                <p class="text-sm text-gray-700 mt-4">
+                    Based on historical data, projects with **medium complexity** and located in **remote areas** have shown a **30-40% higher probability** of a 15%+ cost overrun. This insight is directly fed into future project estimations.
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h3 class="text-3xl font-bold text-center text-[#32384D] mb-8">Benchmarking & Comparative Analysis</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Compare project performance both internally and against industry standards to identify areas of excellence and opportunities for improvement.</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Benchmarking: Schedule Adherence</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Our average schedule adherence compared to industry averages and our own internal best-performing projects, highlighting competitive position.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="benchmarkingChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Top/Bottom 5 Projects by Performance Score</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">A ranking of our projects based on a composite performance score (combining schedule, budget, and quality), used for best practice sharing and corrective actions.</p>
+                    <div class="p-4 bg-white rounded-lg shadow-inner h-64 md:h-72 overflow-y-auto">
+                        <table class="min-w-full text-sm text-left text-gray-700">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="py-2 px-4 font-semibold">Project</th>
+                                    <th class="py-2 px-4 font-semibold">Score</th>
+                                    <th class="py-2 px-4 font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-gray-50"><td class="py-2 px-4">Waterway Revital.</td><td class="py-2 px-4 text-[#63C132]">95</td><td class="py-2 px-4">Excellent</td></tr>
+                                <tr><td class="py-2 px-4">Highway Section B</td><td class="py-2 px-4 text-[#63C132]">92</td><td class="py-2 px-4">Excellent</td></tr>
+                                <tr class="bg-gray-50"><td class="py-2 px-4">Irrigation Canal C</td><td class="py-2 px-4 text-[#63C132]">90</td><td class="py-2 px-4">Very Good</td></tr>
+                                <tr><td class="py-2 px-4">Bridge Renovation</td><td class="py-2 px-4 text-[#FECD1A]">78</td><td class="py-2 px-4">Good</td></tr>
+                                <tr class="bg-gray-50"><td class="py-2 px-4">Urban Drainage Sys.</td><td class="py-2 px-4 text-[#FECD1A]">75</td><td class="py-2 px-4">Good</td></tr>
+                                <tr><td class="py-2 px-4">Reservoir Expansion</td><td class="py-2 px-4 text-[#DC493A]">62</td><td class="py-2 px-4">Needs Imp.</td></tr>
+                                <tr class="bg-gray-50"><td class="py-2 px-4">Dam Reinforcement</td><td class="py-2 px-4 text-[#DC493A]">58</td><td class="py-2 px-4">Critical</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-6 border-t border-gray-200">
+            <p class="text-gray-500 text-sm">DY Uppar and Sons | Driving Efficiency, Mitigating Risk, Building Excellence.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const wrapLabel = (label, maxLength = 16) => {
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + ' ' + word).trim().length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            });
+            if (currentLine) lines.push(currentLine.trim());
+            return lines.length > 1 ? lines : label;
+        };
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        const defaultChartPlugins = {
+            legend: {
+                labels: {
+                    color: '#32384D',
+                    font: { size: 12 }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    title: tooltipTitleCallback
+                },
+                backgroundColor: '#32384D',
+                titleColor: '#FFFFFF',
+                bodyColor: '#FFFFFF',
+                titleFont: { size: 14, weight: 'bold' },
+                bodyFont: { size: 12 },
+                padding: 10,
+                cornerRadius: 4,
+            }
+        };
+
+        // Overall Schedule Adherence (Gauge Chart)
+        new Chart(document.getElementById('overallScheduleAdherenceChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Adherent', 'Behind Schedule'],
+                datasets: [{
+                    data: [88, 12],
+                    backgroundColor: ['#00A6FB', '#F3F4F6'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '80%',
+                rotation: 270,
+                circumference: 180,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false },
+                    datalabels: {
+                        formatter: (value, ctx) => {
+                            return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%';
+                        },
+                        color: '#32384D',
+                        font: { size: 14, weight: 'bold' },
+                        anchor: 'center',
+                        align: 'center'
+                    }
+                },
+                elements: {
+                    arc: {
+                        roundedCornersFor: 'end'
+                    }
+                }
+            },
+            plugins: [{
+                id: 'textCenter',
+                beforeDraw: (chart) => {
+                    const { width, height, ctx } = chart;
+                    ctx.restore();
+                    const fontSize = (height / 114).toFixed(2);
+                    ctx.font = `bolder ${fontSize}em Inter`;
+                    ctx.textBaseline = 'middle';
+                    const text = '88%';
+                    const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                    const textY = height - (height * 0.2); // Adjust position for half-doughnut
+                    ctx.fillStyle = '#00A6FB';
+                    ctx.fillText(text, textX, textY);
+                    ctx.save();
+                }
+            }]
+        });
+
+        // Schedule Adherence by Project Type (Bar Chart)
+        new Chart(document.getElementById('scheduleAdherenceByTypeChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: [
+                    wrapLabel('Irrigation Projects'), 
+                    wrapLabel('Infrastructure Development'), 
+                    wrapLabel('Bridge Construction'), 
+                    wrapLabel('Urban Drainage')
+                ],
+                datasets: [{
+                    label: 'Schedule Adherence (%)',
+                    data: [92, 85, 78, 80],
+                    backgroundColor: ['#00A6FB', '#63C132', '#FECD1A', '#DC493A']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 },
+                    x: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Cumulative Cost Overrun Trend (Line Chart)
+        new Chart(document.getElementById('cumulativeCostOverrunChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Cumulative Cost Overrun (%)',
+                    data: [1.0, 1.5, 2.0, 2.8, 2.5, 3.2],
+                    borderColor: '#DC493A',
+                    backgroundColor: 'rgba(220, 73, 58, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Overrun %' } },
+                    x: { title: { display: true, text: 'Month' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Resource & Material Utilization (Grouped Bar Chart)
+        new Chart(document.getElementById('utilizationChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: [
+                    wrapLabel('Equipment Utilization'), 
+                    wrapLabel('Labor Utilization'), 
+                    wrapLabel('Cement Usage'), 
+                    wrapLabel('Steel Usage')
+                ],
+                datasets: [
+                    { label: 'Planned %', data: [90, 85, 95, 90], backgroundColor: '#00A6FB' },
+                    { label: 'Actual %', data: [85, 78, 90, 82], backgroundColor: '#FECD1A' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 },
+                    x: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Risk Score Distribution (Histogram - using Bar Chart)
+        new Chart(document.getElementById('riskScoreDistributionChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Low (0-20)', 'Med-Low (21-40)', 'Medium (41-60)', 'Med-High (61-80)', 'High (81-100)'],
+                datasets: [{
+                    label: 'Number of Projects',
+                    data: [8, 7, 5, 2, 1],
+                    backgroundColor: ['#63C132', '#00A6FB', '#FECD1A', '#DC493A', '#DC493A'],
+                    barPercentage: 0.9,
+                    categoryPercentage: 0.8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, stepSize: 1 },
+                    x: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Risk Exposure by Driver Type (Radar Chart)
+        new Chart(document.getElementById('riskDriverExposureChart').getContext('2d'), {
+            type: 'radar',
+            data: {
+                labels: ['Operational', 'Financial', 'Environmental', 'Regulatory', 'Supply Chain', 'Technical'],
+                datasets: [{
+                    label: 'Risk Impact Score',
+                    data: [75, 60, 45, 70, 80, 55],
+                    fill: true,
+                    backgroundColor: 'rgba(0, 166, 251, 0.2)',
+                    borderColor: '#00A6FB',
+                    pointBackgroundColor: '#00A6FB',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#00A6FB'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(50, 56, 77, 0.2)' },
+                        grid: { color: 'rgba(50, 56, 77, 0.2)' },
+                        pointLabels: { color: '#32384D', font: { size: 12 } },
+                        ticks: { display: false, beginAtZero: true, max: 100 }
+                    }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Overrun Likelihood (Scatter Plot)
+        new Chart(document.getElementById('overrunLikelihoodChart').getContext('2d'), {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Low Complexity',
+                        data: [{ x: 10, y: 5 }, { x: 15, y: 8 }, { x: 8, y: 3 }, { x: 20, y: 12 }],
+                        backgroundColor: '#63C132',
+                        pointRadius: 6
+                    },
+                    {
+                        label: 'Medium Complexity',
+                        data: [{ x: 30, y: 15 }, { x: 35, y: 20 }, { x: 28, y: 18 }, { x: 40, y: 25 }],
+                        backgroundColor: '#FECD1A',
+                        pointRadius: 6
+                    },
+                    {
+                        label: 'High Complexity',
+                        data: [{ x: 50, y: 25 }, { x: 55, y: 30 }, { x: 48, y: 28 }, { x: 60, y: 35 }],
+                        backgroundColor: '#DC493A',
+                        pointRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Project Complexity Score (0-100)' },
+                        beginAtZero: true,
+                        max: 100
+                    },
+                    y: {
+                        title: { display: true, text: 'Actual % Cost Overrun' },
+                        beginAtZero: true,
+                        max: 40
+                    }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Benchmarking: Schedule Adherence (Bar Chart)
+        new Chart(document.getElementById('benchmarkingChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Our Average', 'Industry Avg.', 'Our Best Project'],
+                datasets: [{
+                    label: 'Schedule Adherence (%)',
+                    data: [88, 80, 95],
+                    backgroundColor: ['#00A6FB', '#FECD1A', '#63C132']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 },
+                    x: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+    </script>
+</body>
+</html>

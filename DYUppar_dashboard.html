@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Equipment Utilization & Maintenance Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">🚜 Equipment Utilization & Maintenance Analytics - DY Uppar</h2>
+
+    <!-- Summary Cards -->
+    <div class="row text-center mb-4">
+      <div class="col-md-3">
+        <div class="card p-3 shadow">
+          <h5>Utilization Rate</h5>
+          <h3>82%</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card p-3 shadow">
+          <h5>Availability</h5>
+          <h3>88%</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card p-3 shadow">
+          <h5>MTBF</h5>
+          <h3>29 days</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card p-3 shadow">
+          <h5>Maintenance Cost</h5>
+          <h3>₹ 4.8 L</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="row mb-5">
+      <div class="col-md-6">
+        <div class="card p-3 shadow">
+          <h5 class="text-center">Equipment Usage by Type</h5>
+          <canvas id="usageByType"></canvas>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card p-3 shadow">
+          <h5 class="text-center">Breakdown Reasons</h5>
+          <canvas id="breakdownReasons"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maintenance and Lifecycle Costs -->
+    <div class="row mb-5">
+      <div class="col-md-6">
+        <div class="card p-3 shadow">
+          <h5 class="text-center">Maintenance Cost: Budget vs Actual</h5>
+          <canvas id="maintCost"></canvas>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card p-3 shadow">
+          <h5 class="text-center">Lifecycle Cost Components</h5>
+          <canvas id="lifecycleCost"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Underutilized Assets -->
+    <div class="card p-3 shadow mb-5">
+      <h5>🔍 Underutilized Equipment Identified for Reallocation:</h5>
+      <ul>
+        <li>Excavator E-102 (42% Utilization)</li>
+        <li>Grader G-015 (45% Utilization)</li>
+        <li>Tipper T-220 (48% Utilization)</li>
+      </ul>
+    </div>
+
+    <!-- Investment Recommendation -->
+    <div class="card p-3 shadow mb-5">
+      <h5>✅ Suggested for Future Investment:</h5>
+      <ul>
+        <li>JCB-800 (94% Utilization, ₹ Low Lifecycle Cost)</li>
+        <li>Crane CR-110 (91% Availability, High MTBF)</li>
+        <li>Concrete Mixer CM-09 (₹ Cost/hr: 510, Consistent Uptime)</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Equipment Usage by Type
+    new Chart(document.getElementById('usageByType'), {
+      type: 'bar',
+      data: {
+        labels: ['Excavator', 'Grader', 'Tipper', 'JCB', 'Crane'],
+        datasets: [{
+          label: 'Usage (hrs)',
+          data: [260, 180, 120, 310, 240],
+          backgroundColor: ['#007bff', '#28a745', '#ffc107', '#17a2b8', '#dc3545']
+        }]
+      },
+      options: { responsive: true }
+    });
+
+    // Breakdown Reasons
+    new Chart(document.getElementById('breakdownReasons'), {
+      type: 'pie',
+      data: {
+        labels: ['Hydraulic Failure', 'Engine Overheat', 'Electrical Fault', 'Tire Wear'],
+        datasets: [{
+          data: [35, 25, 20, 20],
+          backgroundColor: ['#dc3545', '#ffc107', '#28a745', '#17a2b8']
+        }]
+      },
+      options: { responsive: true }
+    });
+
+    // Maintenance Cost: Budget vs Actual
+    new Chart(document.getElementById('maintCost'), {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [
+          {
+            label: 'Budget (₹ in L)',
+            data: [3.5, 3.8, 4.0, 4.2, 4.5],
+            borderColor: '#28a745',
+            fill: false
+          },
+          {
+            label: 'Actual (₹ in L)',
+            data: [3.2, 4.1, 4.4, 4.8, 4.9],
+            borderColor: '#dc3545',
+            fill: false
+          }
+        ]
+      },
+      options: { responsive: true }
+    });
+
+    // Lifecycle Cost Breakdown
+    new Chart(document.getElementById('lifecycleCost'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Purchase', 'Maintenance', 'Labor', 'Operations', 'Insurance'],
+        datasets: [{
+          data: [40, 20, 15, 15, 10],
+          backgroundColor: ['#007bff', '#ffc107', '#28a745', '#17a2b8', '#6c757d']
+        }]
+      },
+      options: { responsive: true }
+    });
+  </script>
+
+</body>
+</html>

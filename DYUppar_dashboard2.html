@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DY Uppar and Sons: Equipment Utilization & Maintenance Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6;
+            color: #32384D;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .kpi-box {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #00A6FB;
+        }
+        .kpi-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #32384D;
+            margin-top: 0.5rem;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black text-[#00A6FB] mb-2">Equipment Utilization & Maintenance Analytics</h1>
+            <h2 class="text-2xl md:text-3xl font-bold text-[#32384D]">DY Uppar and Sons: Optimizing Our Fleet</h2>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Optimizing the use, maintenance, and life cycle of our heavy construction equipment fleet to save costs and prevent downtime.</p>
+        </header>
+
+        <section class="mb-16">
+            <h3 class="text-3xl font-bold text-center text-[#32384D] mb-8">Executive Summary: Fleet Performance Overview</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Key metrics highlighting the overall health and efficiency of our equipment fleet, providing quick insights into operational status.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="kpi-box">
+                    <div class="kpi-value">78<span class="text-xl">%</span></div>
+                    <div class="kpi-label">Overall Utilization Rate</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-value">92<span class="text-xl">%</span></div>
+                    <div class="kpi-label">Overall Availability</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-value">250<span class="text-xl"> hrs</span></div>
+                    <div class="kpi-label">Avg. MTBF</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-value">-5<span class="text-xl">%</span></div>
+                    <div class="kpi-label">Maint. Cost Variance</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Equipment Utilization Rate by Type</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">This chart shows the average utilization rate across different categories of equipment, identifying which types are most productive.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="utilizationByTypeChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Equipment Availability by Project Site</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Monitoring equipment availability at various project sites helps ensure resources are ready where and when they are needed.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="availabilityBySiteChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h3 class="text-3xl font-bold text-center text-[#32384D] mb-8">Maintenance Insights: Proactive Care & Cost Control</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Detailed analysis of maintenance activities, costs, and common breakdown reasons to improve reliability and reduce expenses.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Scheduled vs. Breakdown Maintenance</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">This chart illustrates the proportion of maintenance activities that are planned versus those that occur due to unexpected breakdowns.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="maintenanceTypeChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Mean Time Between Failures (MTBF) Trend</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Tracking the average time an equipment operates before failure helps assess reliability and the effectiveness of maintenance programs.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="mtbfTrendChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Top 5 Breakdown Reasons</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Identifying the most common causes of equipment breakdowns allows us to implement targeted preventive measures.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="breakdownReasonsChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Maintenance Cost: Budget vs. Actual</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Comparing actual maintenance expenditures against the budget helps manage costs and assess financial performance in fleet upkeep.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="maintenanceCostChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="card p-6 mt-8">
+                <h4 class="font-bold text-xl mb-4">Service Vendor Performance</h4>
+                <p class="text-sm text-gray-600 mb-4">Assessing our service providers based on key metrics to ensure quality and efficiency in external maintenance support.</p>
+                <div class="p-4 bg-[#F3F4F6] rounded-lg shadow-inner h-48 overflow-y-auto">
+                    <table class="min-w-full text-sm text-left text-gray-700">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="py-2 px-4 font-semibold">Vendor</th>
+                                <th class="py-2 px-4 font-semibold">Avg. Response Time (hrs)</th>
+                                <th class="py-2 px-4 font-semibold">On-Time Completion (%)</th>
+                                <th class="py-2 px-4 font-semibold">Quality Score (1-5)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white"><td class="py-2 px-4">Prime Mech.</td><td class="py-2 px-4">4</td><td class="py-2 px-4">95</td><td class="py-2 px-4">4.8</td></tr>
+                            <tr class="bg-gray-50"><td class="py-2 px-4">Heavy Repair Co.</td><td class="py-2 px-4">8</td><td class="py-2 px-4">88</td><td class="py-2 px-4">4.1</td></tr>
+                            <tr class="bg-white"><td class="py-2 px-4">Fleet Solutions</td><td class="py-2 px-4">6</td><td class="py-2 px-4">92</td><td class="py-2 px-4">4.5</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h3 class="text-3xl font-bold text-center text-[#32384D] mb-8">Life Cycle & Asset Optimization</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">Understanding the total cost of ownership and identifying opportunities to optimize asset utilization and inform future investments.</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Average Life Cycle Cost by Equipment Type</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">This chart breaks down the total cost of owning and operating each type of equipment over its lifespan.</p>
+                    <div class="chart-container h-64 md:h-72"><canvas id="lifeCycleCostChart"></canvas></div>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="font-bold text-xl mb-4">Under-utilized Assets for Reallocation</h4>
+                    <p class="text-sm text-gray-600 mb-4 flex-grow">Identifying equipment that is not being fully utilized presents opportunities for internal reallocation to other projects or potential leasing options.</p>
+                    <div class="p-4 bg-[#F3F4F6] rounded-lg shadow-inner h-64 md:h-72 overflow-y-auto">
+                        <table class="min-w-full text-sm text-left text-gray-700">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="py-2 px-4 font-semibold">Equipment ID</th>
+                                    <th class="py-2 px-4 font-semibold">Type</th>
+                                    <th class="py-2 px-4 font-semibold">Utilization (last 30 days)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white"><td class="py-2 px-4">EXC005</td><td class="py-2 px-4">Excavator</td><td class="py-2 px-4 text-[#DC493A]">35%</td></tr>
+                                <tr class="bg-gray-50"><td class="py-2 px-4">DUMP012</td><td class="py-2 px-4">Dump Truck</td><td class="py-2 px-4 text-[#FECD1A]">48%</td></tr>
+                                <tr class="bg-white"><td class="py-2 px-4">ROLL003</td><td class="py-2 px-4">Road Roller</td><td class="py-2 px-4 text-[#DC493A]">28%</td></tr>
+                                <tr class="bg-gray-50"><td class="py-2 px-4">GRD007</td><td class="py-2 px-4">Grader</td><td class="py-2 px-4 text-[#FECD1A]">52%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-6 mt-8">
+                <h4 class="font-bold text-xl mb-4">Future Investment: Best Performing Equipment</h4>
+                <p class="text-sm text-gray-600 mb-4">Identifying top-performing equipment based on a composite score of utilization, availability, and low life cycle cost to inform future purchasing decisions.</p>
+                <div class="chart-container h-80 md:h-96"><canvas id="bestPerformingEquipmentChart"></canvas></div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-6 border-t border-gray-200">
+            <p class="text-gray-500 text-sm">DY Uppar and Sons | Optimizing Assets, Driving Efficiency.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const wrapLabel = (label, maxLength = 16) => {
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + ' ' + word).trim().length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            });
+            if (currentLine) lines.push(currentLine.trim());
+            return lines.length > 1 ? lines : label;
+        };
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        const defaultChartPlugins = {
+            legend: {
+                labels: {
+                    color: '#32384D',
+                    font: { size: 12 }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    title: tooltipTitleCallback
+                },
+                backgroundColor: '#32384D',
+                titleColor: '#FFFFFF',
+                bodyColor: '#FFFFFF',
+                titleFont: { size: 14, weight: 'bold' },
+                bodyFont: { size: 12 },
+                padding: 10,
+                cornerRadius: 4,
+            }
+        };
+
+        // Equipment Utilization Rate by Type (Bar Chart)
+        new Chart(document.getElementById('utilizationByTypeChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: [
+                    wrapLabel('Excavators'),
+                    wrapLabel('Dump Trucks'),
+                    wrapLabel('Cranes'),
+                    wrapLabel('Loaders'),
+                    wrapLabel('Road Rollers')
+                ],
+                datasets: [{
+                    label: 'Utilization Rate (%)',
+                    data: [78, 85, 65, 72, 80],
+                    backgroundColor: ['#00A6FB', '#63C132', '#FECD1A', '#DC493A', '#00A6FB']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 },
+                    x: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Equipment Availability by Site (Bar Chart)
+        new Chart(document.getElementById('availabilityBySiteChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Site A (Irrigation)', 'Site B (Bridge)', 'Site C (Urban)', 'Site D (Dam)'],
+                datasets: [{
+                    label: 'Availability (%)',
+                    data: [95, 88, 92, 85],
+                    backgroundColor: ['#63C132', '#00A6FB', '#FECD1A', '#DC493A']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 },
+                    x: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Scheduled vs. Breakdown Maintenance (Donut Chart)
+        new Chart(document.getElementById('maintenanceTypeChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Scheduled Maintenance', 'Breakdown Maintenance'],
+                datasets: [{
+                    data: [70, 30],
+                    backgroundColor: ['#00A6FB', '#DC493A'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { size: 12 } }
+                    },
+                    tooltip: { callbacks: { title: tooltipTitleCallback }, backgroundColor: '#32384D' }
+                }
+            }
+        });
+
+        // Mean Time Between Failures (MTBF) Trend (Line Chart)
+        new Chart(document.getElementById('mtbfTrendChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'MTBF (Hours)',
+                    data: [220, 235, 250, 245, 260, 275],
+                    borderColor: '#63C132',
+                    backgroundColor: 'rgba(99, 193, 50, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Hours' } },
+                    x: { title: { display: true, text: 'Month' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Top 5 Breakdown Reasons (Horizontal Bar Chart)
+        new Chart(document.getElementById('breakdownReasonsChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: [
+                    wrapLabel('Hydraulic System Failure'),
+                    wrapLabel('Engine Overheating'),
+                    wrapLabel('Electrical Faults'),
+                    wrapLabel('Track/Tire Issues'),
+                    wrapLabel('Operator Error')
+                ],
+                datasets: [{
+                    label: 'Number of Incidents',
+                    data: [15, 12, 10, 8, 7],
+                    backgroundColor: '#DC493A'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { beginAtZero: true },
+                    y: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Maintenance Cost: Budget vs. Actual (Bar Chart)
+        new Chart(document.getElementById('maintenanceCostChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Q1 2024', 'Q2 2024'],
+                datasets: [
+                    { label: 'Budgeted Cost ($)', data: [150000, 160000], backgroundColor: '#00A6FB' },
+                    { label: 'Actual Cost ($)', data: [155000, 152000], backgroundColor: '#FECD1A' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { callback: function(value) { return '$' + value.toLocaleString(); } } },
+                    x: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Average Life Cycle Cost by Equipment Type (Bar Chart)
+        new Chart(document.getElementById('lifeCycleCostChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: [
+                    wrapLabel('Excavators'),
+                    wrapLabel('Cranes'),
+                    wrapLabel('Bulldozers'),
+                    wrapLabel('Loaders')
+                ],
+                datasets: [{
+                    label: 'Average Life Cycle Cost ($)',
+                    data: [450000, 700000, 380000, 300000],
+                    backgroundColor: ['#00A6FB', '#FECD1A', '#63C132', '#DC493A']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { callback: function(value) { return '$' + value.toLocaleString(); } } },
+                    x: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+
+        // Best Performing Equipment for Future Investment (Bar Chart)
+        new Chart(document.getElementById('bestPerformingEquipmentChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: [
+                    wrapLabel('Excavator X-15'),
+                    wrapLabel('Dump Truck Z-20'),
+                    wrapLabel('Loader P-10'),
+                    wrapLabel('Crane M-5')
+                ],
+                datasets: [{
+                    label: 'Composite Performance Score',
+                    data: [92, 88, 85, 75],
+                    backgroundColor: ['#63C132', '#00A6FB', '#FECD1A', '#DC493A']
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { beginAtZero: true, max: 100 },
+                    y: { ticks: { color: '#32384D' } }
+                },
+                plugins: defaultChartPlugins
+            }
+        });
+    </script>
+</body>
+</html>
