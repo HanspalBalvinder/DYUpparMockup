@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Checker</title>
+</head>
+<body>
+    <h1>URL Existence Checker</h1>
+    <form method="post">
+        URL Pattern (use {} for numbers): <input type="text" name="pattern" required><br><br>
+        Start Number: <input type="number" name="start" required><br><br>
+        End Number: <input type="number" name="end" required><br><br>
+        <input type="submit" value="Check URLs">
+    </form>
+
+    {% if urls %}
+        <h2>✅ Existing URLs</h2>
+        <ul>
+            {% for url in urls %}
+                <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
+            {% endfor %}
+        </ul>
+        <p>Saved to <strong>existing_urls.csv</strong></p>
+    {% endif %}
+</body>
+</html>
